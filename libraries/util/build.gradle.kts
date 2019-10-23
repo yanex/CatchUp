@@ -28,6 +28,7 @@ android {
     targetSdkVersion(deps.android.build.targetSdkVersion)
   }
   compileOptions {
+    setCoreLibraryDesugaringEnabled(true)
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
   }
@@ -62,7 +63,6 @@ dependencies {
   api(deps.android.androidx.coreKtx)
   api(deps.dagger.runtime)
   api(deps.kotlin.stdlib.jdk7)
-  api(deps.misc.lazythreeten)
   api(deps.moshi.core)
   api(deps.misc.timber)
   api(deps.okhttp.core)

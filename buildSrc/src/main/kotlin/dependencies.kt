@@ -372,7 +372,6 @@ object deps {
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
     const val kotpref = "com.chibatching.kotpref:kotpref:${versions.kotpref}"
     const val kotprefEnum = "com.chibatching.kotpref:enum-support:${versions.kotpref}"
-    const val lazythreeten = "com.gabrielittner.threetenbp:lazythreetenbp:0.7.0"
     const val lottie = "com.airbnb.android:lottie:3.1.0"
     const val moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
     const val okio = "com.squareup.okio:okio:2.4.1"

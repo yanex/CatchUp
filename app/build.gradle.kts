@@ -43,7 +43,6 @@ android {
     targetSdkVersion(deps.android.build.targetSdkVersion)
     versionCode = deps.build.versionCodePH
     versionName = deps.build.versionNamePH
-    multiDexEnabled = false
 
     the<BasePluginConvention>().archivesBaseName = "catchup"
     vectorDrawables.useSupportLibrary = true
@@ -75,6 +74,7 @@ android {
     }
   }
   compileOptions {
+    setCoreLibraryDesugaringEnabled(true)
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
   }
@@ -228,7 +228,7 @@ play {
 
 apollo {
   customTypeMapping.set(mapOf(
-      "DateTime" to "org.threeten.bp.Instant",
+      "DateTime" to "java.time.Instant",
       "URI" to "okhttp3.HttpUrl"
   ))
   setGenerateKotlinModels(true)
@@ -466,7 +466,6 @@ dependencies {
   implementation(deps.retrofit.rxJava2)
   implementation(deps.rx.android)
   implementation(deps.rx.java)
-  implementation(deps.misc.lazythreeten)
   implementation(deps.misc.tapTargetView)
   implementation(deps.misc.timber)
   implementation(deps.misc.debug.processPhoenix)

@@ -38,6 +38,7 @@ android {
         "\"${properties["catchup_github_developer_token"]}\"")
   }
   compileOptions {
+    setCoreLibraryDesugaringEnabled(true)
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
   }
@@ -73,7 +74,7 @@ kapt {
 
 apollo {
   customTypeMapping.set(mapOf(
-      "DateTime" to "org.threeten.bp.Instant",
+      "DateTime" to "java.time.Instant",
       "URI" to "okhttp3.HttpUrl"
   ))
   setGenerateKotlinModels(true)
@@ -101,6 +102,5 @@ dependencies {
   api(project(":service-api"))
   api(deps.android.androidx.annotations)
   api(deps.dagger.runtime)
-  api(deps.misc.lazythreeten)
   api(deps.rx.java)
 }

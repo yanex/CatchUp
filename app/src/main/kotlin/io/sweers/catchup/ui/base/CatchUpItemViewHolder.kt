@@ -45,7 +45,7 @@ import io.sweers.catchup.util.primaryLocale
 import io.sweers.catchup.util.show
 import io.sweers.catchup.util.showIf
 import kotterknife.bindView
-import org.threeten.bp.Instant
+import java.time.Instant
 
 class CatchUpItemViewHolder(
   itemView: View
