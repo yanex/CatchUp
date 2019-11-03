@@ -106,6 +106,7 @@ class CoilImagesPlugin(context: Context, imageLoader: ImageLoader) : AbstractMar
         }
       }
 
+      @Suppress("UNUSED_PARAMETER", "unused") // TODO circle back to this
       private fun onLoadCleared(placeholder: Drawable?) {
         // we won't be checking if target is still present as cancellation
         // must remove target anyway
