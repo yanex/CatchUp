@@ -30,8 +30,8 @@ import android.widget.Spinner
 import android.widget.Switch
 import android.widget.TextView
 import dagger.Lazy
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.R
-import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.data.DebugPreferences
 import io.sweers.catchup.data.LumberYard
 import io.sweers.catchup.flowbinding.viewScope
@@ -68,7 +68,7 @@ class DebugView(
   private val client: Lazy<OkHttpClient>,
   private val lumberYard: LumberYard,
   private val debugPreferences: DebugPreferences,
-  private val versionInfo: VersionInfo
+  private val appConfig: AppConfig
 ) : FrameLayout(context, attrs) {
   internal val icon by bindView<View>(R.id.debug_icon)
   private val networkDelayView by bindView<Spinner>(R.id.debug_network_delay)
@@ -265,9 +265,9 @@ class DebugView(
   }
 
   private fun setupBuildSection() {
-    buildNameView.text = versionInfo.name
-    buildCodeView.text = versionInfo.code.toString()
-    buildDateView.text = versionInfo.timestamp
+    buildNameView.text = appConfig.versionName
+    buildCodeView.text = appConfig.versionCode.toString()
+    buildDateView.text = appConfig.timestamp
   }
 
   private fun setupDeviceSection() {

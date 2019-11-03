@@ -31,10 +31,10 @@ import androidx.lifecycle.lifecycleScope
 import com.getkeepsafe.taptargetview.TapTarget
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.Lazy
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.noties.markwon.Markwon
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.ColorUtils
-import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.edu.Syllabus
 import io.sweers.catchup.edu.id
@@ -57,16 +57,16 @@ class ChangelogHelper @Inject constructor(
   private val fontHelper: FontHelper,
   private val syllabus: Syllabus,
   private val sharedPreferences: SharedPreferences,
-  private val versionInfo: VersionInfo
+  private val appConfig: AppConfig
 ) {
 
   fun bindWith(toolbar: Toolbar, @ColorInt hintColor: Int, linkColor: () -> Int) {
     val changelog = toolbar.resources.getString(R.string.changelog_text)
     val lastVersion = sharedPreferences.getString("last_version", null)
     // Check if version name changed and if there's a changelog
-    if (lastVersion != versionInfo.name) {
+    if (lastVersion != appConfig.versionName) {
       // Write the new version in
-      sharedPreferences.edit().putString("last_version", versionInfo.name).apply()
+      sharedPreferences.edit().putString("last_version", appConfig.versionName).apply()
       if (lastVersion == null) {
         // This was the first load it seems, so ignore it
         return
@@ -111,7 +111,7 @@ class ChangelogHelper @Inject constructor(
           setContentView(contentView)
           val title = contentView.findViewById<TextView>(R.id.build_name)!!.apply {
             typeface = fontHelper.getFont()
-            text = versionInfo.name
+            text = appConfig.versionName
           }
           val changes = contentView.findViewById<TextView>(R.id.changes)!!.also { changesTextView ->
             changesTextView.typeface = fontHelper.getFont()

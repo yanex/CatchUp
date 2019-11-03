@@ -41,6 +41,7 @@ import com.mattprecious.telescope.TelescopeLayout
 import com.uber.autodispose.android.scope
 import com.uber.autodispose.autoDispose
 import dagger.Lazy
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.android.MainThreadDisposable
@@ -49,7 +50,6 @@ import io.reactivex.schedulers.Schedulers
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.ActivityEvent
 import io.sweers.catchup.base.ui.BaseActivity
-import io.sweers.catchup.base.ui.VersionInfo
 import io.sweers.catchup.base.ui.ViewContainer
 import io.sweers.catchup.data.DebugPreferences
 import io.sweers.catchup.data.LumberYard
@@ -86,7 +86,7 @@ internal class DebugViewContainer @Inject constructor(
   private val syllabus: Syllabus,
   private val fontHelper: FontHelper,
   private val debugPreferences: DebugPreferences,
-  private val versionInfo: VersionInfo
+  private val appConfig: AppConfig
 ) : ViewContainer {
   private val pixelGridEnabled = debugPreferences.flowFor { ::pixelGridEnabled }
   private val pixelRatioEnabled = debugPreferences.flowFor { ::pixelRatioEnabled }
@@ -102,7 +102,7 @@ internal class DebugViewContainer @Inject constructor(
     val viewHolder = DebugViewViewHolder(contentView)
 
     val drawerContext = ContextThemeWrapper(activity, R.style.DebugDrawer)
-    val debugView = DebugView(drawerContext, null, lazyOkHttpClient, lumberYard, debugPreferences, versionInfo)
+    val debugView = DebugView(drawerContext, null, lazyOkHttpClient, lumberYard, debugPreferences, appConfig)
     viewHolder.debugDrawer.addView(debugView)
 
     // Set up the contextual actions to watch views coming in and out of the content area.

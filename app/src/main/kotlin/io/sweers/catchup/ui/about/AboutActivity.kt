@@ -44,12 +44,11 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.uber.autodispose.autoDispose
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.noties.markwon.Markwon
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.base.ui.InjectingBaseFragment
-import io.sweers.catchup.base.ui.VersionInfo
-import io.sweers.catchup.base.ui.versionInfo
 import io.sweers.catchup.data.LinkManager
 import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerFragment
@@ -131,7 +130,7 @@ class AboutFragment : InjectingBaseFragment() {
   @Inject
   internal lateinit var markwon: Markwon
   @Inject
-  internal lateinit var versionInfo: VersionInfo
+  internal lateinit var appConfig: AppConfig
 
   private val rootLayout by bindView<CoordinatorLayout>(R.id.about_fragment_root)
   private val appBarLayout by bindView<AppBarLayout>(R.id.appbarlayout)
@@ -240,7 +239,7 @@ class AboutFragment : InjectingBaseFragment() {
     aboutText.text = buildMarkdown {
       text(aboutText.resources.getString(R.string.about_description))
       newline(3)
-      text(aboutText.resources.getString(R.string.about_version, versionInfo.name))
+      text(aboutText.resources.getString(R.string.about_version, appConfig.versionName))
       newline(2)
       text(aboutText.resources.getString(R.string.about_by))
       space()
