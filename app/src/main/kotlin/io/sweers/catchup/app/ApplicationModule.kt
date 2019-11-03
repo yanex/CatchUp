@@ -121,10 +121,11 @@ abstract class ApplicationModule {
     @Singleton
     internal fun markwon(
 //      imageLoader: ImageLoader, // TODO try to make this lazy
-      @ApplicationContext context: Context // TODO should use themed one from activity?
+      @ApplicationContext context: Context, // TODO should use themed one from activity?
+      appConfig: AppConfig
     ): Markwon {
       return Markwon.builder(context)
-          .textSetter(PrecomputedTextSetterCompat.create())
+          .textSetter(PrecomputedTextSetterCompat.create(appConfig = appConfig))
           .usePlugins(listOf(
               MovementMethodPlugin.create(LinkTouchMovementMethod()),
               ImagesPlugin.create(),

@@ -44,6 +44,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton.OnV
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.Multibinds
+import dev.zacsweers.catchup.appconfig.AppConfig
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.edu.Syllabus
@@ -97,6 +98,8 @@ class OrderServicesFragment : InjectableBaseFragment() {
   internal lateinit var syllabus: Syllabus
   @Inject
   internal lateinit var fontHelper: FontHelper
+  @Inject
+  internal lateinit var appConfig: AppConfig
   private val save by bindView<FloatingActionButton>(R.id.save)
   private val toolbar by bindView<Toolbar>(R.id.toolbar)
   private val recyclerView by bindView<RecyclerView>(R.id.list)
@@ -134,7 +137,7 @@ class OrderServicesFragment : InjectableBaseFragment() {
     super.onViewCreated(view, savedInstanceState)
     with(activity as AppCompatActivity) {
       if (!isInNightMode()) {
-        toolbar.setLightStatusBar()
+        toolbar.setLightStatusBar(appConfig)
       }
     }
     val lm = LinearLayoutManager(view.context)

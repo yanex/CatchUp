@@ -214,7 +214,7 @@ class AboutFragment : InjectingBaseFragment() {
 
     with(activity as AppCompatActivity) {
       if (!isInNightMode()) {
-        toolbar.setLightStatusBar()
+        toolbar.setLightStatusBar(appConfig)
       }
       setSupportActionBar(toolbar)
       supportActionBar?.run {
