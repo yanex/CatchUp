@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
+  id("kotlin-kapt-lite")
 }
 
 apply {
@@ -55,13 +55,8 @@ tasks.withType<KotlinCompile> {
   }
 }
 
-kapt {
-  correctErrorTypes = true
-  mapDiagnosticLocations = true
-}
-
 dependencies {
-  kapt(deps.android.androidx.room.apt)
+  annotationProcessor(deps.android.androidx.room.apt)
 
   implementation(deps.kotlin.coroutinesAndroid)
   implementation(deps.kotlin.coroutinesRx)

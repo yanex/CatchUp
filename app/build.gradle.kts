@@ -21,7 +21,7 @@ import java.util.Date
 plugins {
   id("com.android.application")
   kotlin("android")
-  kotlin("kapt")
+  id("kotlin-kapt-lite")
   id("com.apollographql.apollo")
 //  id("com.bugsnag.android.gradle")
   id("com.github.triplet.play")
@@ -57,6 +57,18 @@ android {
     buildConfigField("String", "GITHUB_DEVELOPER_TOKEN",
         "\"${properties["catchup_github_developer_token"]}\"")
     resValue("string", "changelog_text", "\"${getChangelog()}\"")
+
+    javaCompileOptions {
+      annotationProcessorOptions {
+        arguments(
+          mapOf(
+            "room.schemaLocation" to "$projectDir/schemas",
+            "room.incremental" to "true",
+            "moshi.generated" to "javax.annotation.Generated"
+          )
+        )
+      }
+    }
   }
   buildFeatures {
     viewBinding = true
@@ -206,16 +218,6 @@ android {
       firebaseProperty("catchup.google_crash_reporting_api_key")
       firebaseProperty("catchup.project_id", false)
     }
-  }
-}
-
-kapt {
-  correctErrorTypes = true
-  mapDiagnosticLocations = true
-  arguments {
-    arg("room.schemaLocation", "$projectDir/schemas")
-    arg("room.incremental", "true")
-    arg("moshi.generated", "javax.annotation.Generated")
   }
 }
 
@@ -407,7 +409,7 @@ tasks.create("updateVersion", UpdateVersion::class.java) {
 }
 
 dependencies {
-  kapt(project(":libraries:tooling:spi-visualizer"))
+  annotationProcessor(project(":libraries:tooling:spi-visualizer"))
 
   implementation(deps.markwon.core)
   implementation(deps.markwon.extStrikethrough)
@@ -447,11 +449,11 @@ dependencies {
 
   // Arch components
   implementation(deps.android.androidx.lifecycle.extensions)
-  kapt(deps.android.androidx.lifecycle.apt)
+  annotationProcessor(deps.android.androidx.lifecycle.apt)
   implementation(deps.android.androidx.room.runtime)
   implementation(deps.android.androidx.room.rxJava2)
   implementation(deps.android.androidx.room.ktx)
-  kapt(deps.android.androidx.room.apt)
+  annotationProcessor(deps.android.androidx.room.apt)
 
   // Kotlin
   implementation(deps.android.androidx.coreKtx)
@@ -462,7 +464,7 @@ dependencies {
   implementation(deps.android.androidx.lifecycle.ktx)
 
   // Moshi
-  kapt(deps.moshi.compiler)
+  annotationProcessor(deps.moshi.compiler)
   implementation(deps.moshi.core)
 
   // Firebase
@@ -541,8 +543,8 @@ dependencies {
 //  debugImplementation(deps.hyperion.plugins.timber)
 
   // Dagger
-  kapt(deps.dagger.apt.compiler)
-  kapt(deps.dagger.android.apt.processor)
+  annotationProcessor(deps.dagger.apt.compiler)
+  annotationProcessor(deps.dagger.android.apt.processor)
   compileOnly(deps.misc.javaxInject)
   implementation(deps.dagger.runtime)
   implementation(deps.dagger.android.runtime)

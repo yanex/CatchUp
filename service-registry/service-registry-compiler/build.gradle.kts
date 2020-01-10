@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm")
-  kotlin("kapt")
+  id("kotlin-kapt-lite")
 }
 
 apply {
@@ -32,13 +32,8 @@ tasks.withType<KotlinCompile> {
   }
 }
 
-kapt {
-  correctErrorTypes = true
-  mapDiagnosticLocations = true
-}
-
 dependencies {
-  kapt(deps.auto.service)
+  annotationProcessor(deps.auto.service)
   compileOnly(deps.auto.service)
 
   implementation(project(":service-registry:service-registry-annotations"))
@@ -47,6 +42,6 @@ dependencies {
   implementation(deps.crumb.compilerApi)
   implementation(deps.dagger.runtime)
   implementation(deps.kotlin.metadata)
-  implementation(deps.kotlin.poet)
+  implementation(deps.build.javapoet)
   implementation(deps.kotlin.stdlib.jdk8)
 }

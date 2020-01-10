@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
+  id("kotlin-kapt-lite")
 }
 
 apply {
@@ -56,16 +56,11 @@ tasks.withType<KotlinCompile> {
   }
 }
 
-kapt {
-  correctErrorTypes = true
-  mapDiagnosticLocations = true
-}
-
 dependencies {
-  kapt(project(":service-registry:service-registry-compiler"))
-  kapt(deps.crumb.compiler)
-  kapt(deps.dagger.apt.compiler)
-  kapt(deps.tikxml.apt)
+  annotationProcessor(project(":service-registry:service-registry-compiler"))
+  annotationProcessor(deps.crumb.compiler)
+  annotationProcessor(deps.dagger.apt.compiler)
+  annotationProcessor(deps.tikxml.apt)
 
   implementation(project(":libraries:util"))
   implementation(deps.okhttp.core)

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
+  id("kotlin-kapt-lite")
 }
 
 tasks.withType<KotlinCompile> {
@@ -37,6 +37,18 @@ android {
     targetSdkVersion(deps.android.build.targetSdkVersion)
     buildConfigField("String", "SMMRY_API_KEY",
         "\"${properties["catchup_smmry_api_key"]}\"")
+
+    javaCompileOptions {
+      annotationProcessorOptions {
+        arguments(
+          mapOf(
+            "room.schemaLocation" to "$projectDir/schemas",
+            "room.incremental" to "true",
+            "moshi.generated" to "javax.annotation.Generated"
+          )
+        )
+      }
+    }
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -53,20 +65,10 @@ android {
   }
 }
 
-kapt {
-  correctErrorTypes = true
-  mapDiagnosticLocations = true
-  arguments {
-    arg("room.schemaLocation", "$projectDir/schemas")
-    arg("room.incremental", "true")
-    arg("moshi.generated", "javax.annotation.Generated")
-  }
-}
-
 dependencies {
-  kapt(deps.dagger.apt.compiler)
-  kapt(deps.dagger.android.apt.processor)
-  kapt(deps.moshi.sealed.compiler)
+  annotationProcessor(deps.dagger.apt.compiler)
+  annotationProcessor(deps.dagger.android.apt.processor)
+  annotationProcessor(deps.moshi.sealed.compiler)
   compileOnly(deps.misc.javaxInject)
   implementation(deps.dagger.runtime)
   implementation(deps.dagger.android.runtime)
@@ -77,13 +79,13 @@ dependencies {
   implementation(project(":libraries:retrofitconverters"))
   implementation(project(":libraries:util"))
   implementation(deps.misc.lottie)
-  kapt(deps.moshi.compiler)
+  annotationProcessor(deps.moshi.compiler)
   implementation(deps.moshi.adapters)
   implementation(deps.moshi.core)
   implementation(deps.moshi.sealed.annotations)
   implementation(deps.android.androidx.room.runtime)
   implementation(deps.android.androidx.room.ktx)
-  kapt(deps.android.androidx.room.apt)
+  annotationProcessor(deps.android.androidx.room.apt)
   implementation(deps.android.androidx.lifecycle.ktx)
   implementation(deps.kotlin.coroutines)
   implementation(deps.kotlin.stdlib.jdk7)

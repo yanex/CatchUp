@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
+  id("kotlin-kapt-lite")
 }
 
 apply {
@@ -51,14 +51,9 @@ tasks.withType<KotlinCompile> {
   }
 }
 
-kapt {
-  correctErrorTypes = true
-  mapDiagnosticLocations = true
-}
-
 dependencies {
-  kapt(deps.crumb.compiler)
-  kapt(project(":service-registry:service-registry-compiler"))
+  annotationProcessor(deps.crumb.compiler)
+  annotationProcessor(project(":service-registry:service-registry-compiler"))
 
   implementation(project(":service-registry:service-registry-annotations"))
   implementation(deps.kotlin.stdlib.jdk7)

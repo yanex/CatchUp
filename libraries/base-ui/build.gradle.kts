@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
+  id("kotlin-kapt-lite")
 }
 
 tasks.withType<KotlinCompile> {
@@ -53,14 +53,9 @@ android {
   }
 }
 
-kapt {
-  correctErrorTypes = true
-  mapDiagnosticLocations = true
-}
-
 dependencies {
-  kapt(deps.dagger.apt.compiler)
-  kapt(deps.dagger.android.apt.processor)
+  annotationProcessor(deps.dagger.apt.compiler)
+  annotationProcessor(deps.dagger.android.apt.processor)
   compileOnly(deps.misc.javaxInject)
   api(project(":libraries:util"))
   api(deps.dagger.android.runtime)

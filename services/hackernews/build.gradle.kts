@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
+  id("kotlin-kapt-lite")
   id("kotlin-noarg")
 }
 
@@ -64,19 +64,14 @@ tasks.withType<KotlinCompile> {
   }
 }
 
-kapt {
-  correctErrorTypes = true
-  mapDiagnosticLocations = true
-}
-
 dependencies {
   api(project(":service-api"))
   implementation(project(":libraries:util"))
 
-  kapt(project(":service-registry:service-registry-compiler"))
-  kapt(deps.crumb.compiler)
-  kapt(deps.dagger.apt.compiler)
-  kapt(deps.assistedInject.processor)
+  annotationProcessor(project(":service-registry:service-registry-compiler"))
+  annotationProcessor(deps.crumb.compiler)
+  annotationProcessor(deps.dagger.apt.compiler)
+  annotationProcessor(deps.assistedInject.processor)
   compileOnly(deps.assistedInject.annotations)
 
   implementation(deps.android.androidx.swipeRefresh)

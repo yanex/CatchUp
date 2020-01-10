@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
+  id("kotlin-kapt-lite")
   id("com.apollographql.apollo")
 }
 
@@ -60,11 +60,6 @@ tasks.withType<KotlinCompile> {
   }
 }
 
-kapt {
-  correctErrorTypes = true
-  mapDiagnosticLocations = true
-}
-
 apollo {
   service("github") {
     @Suppress("UnstableApiUsage")
@@ -79,9 +74,9 @@ apollo {
 }
 
 dependencies {
-  kapt(project(":service-registry:service-registry-compiler"))
-  kapt(deps.crumb.compiler)
-  kapt(deps.dagger.apt.compiler)
+  annotationProcessor(project(":service-registry:service-registry-compiler"))
+  annotationProcessor(deps.crumb.compiler)
+  annotationProcessor(deps.dagger.apt.compiler)
 
   compileOnly(deps.misc.javaxInject)
 

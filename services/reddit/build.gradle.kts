@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
+  id("kotlin-kapt-lite")
 }
 
 apply {
@@ -33,6 +33,14 @@ android {
     minSdkVersion(deps.android.build.minSdkVersion)
     targetSdkVersion(deps.android.build.targetSdkVersion)
     vectorDrawables.useSupportLibrary = true
+
+    javaCompileOptions {
+      annotationProcessorOptions {
+        arguments(
+          mapOf("moshi.generated" to "javax.annotation.Generated")
+        )
+      }
+    }
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -56,19 +64,11 @@ tasks.withType<KotlinCompile> {
   }
 }
 
-kapt {
-  correctErrorTypes = true
-  mapDiagnosticLocations = true
-  arguments {
-    arg("moshi.generated", "javax.annotation.Generated")
-  }
-}
-
 dependencies {
-  kapt(project(":service-registry:service-registry-compiler"))
-  kapt(deps.crumb.compiler)
-  kapt(deps.dagger.apt.compiler)
-  kapt(deps.moshi.compiler)
+  annotationProcessor(project(":service-registry:service-registry-compiler"))
+  annotationProcessor(deps.crumb.compiler)
+  annotationProcessor(deps.dagger.apt.compiler)
+  annotationProcessor(deps.moshi.compiler)
 
   implementation(project(":libraries:util"))
   implementation(deps.misc.okio)

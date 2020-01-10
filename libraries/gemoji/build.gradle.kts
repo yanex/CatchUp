@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("com.android.library")
   kotlin("android")
-  kotlin("kapt")
+  id("kotlin-kapt-lite")
 }
 
 apply {
@@ -32,6 +32,17 @@ android {
   defaultConfig {
     minSdkVersion(deps.android.build.minSdkVersion)
     targetSdkVersion(deps.android.build.targetSdkVersion)
+
+    javaCompileOptions {
+      annotationProcessorOptions {
+        arguments(
+          mapOf(
+            "room.schemaLocation" to "$projectDir/schemas",
+            "room.incremental" to "true"
+          )
+        )
+      }
+    }
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -55,20 +66,11 @@ tasks.withType<KotlinCompile> {
   }
 }
 
-kapt {
-  correctErrorTypes = true
-  mapDiagnosticLocations = true
-  arguments {
-    arg("room.schemaLocation", "$projectDir/schemas")
-    arg("room.incremental", "true")
-  }
-}
-
 dependencies {
   implementation(project(":libraries:util"))
 
-  kapt(deps.android.androidx.room.apt)
-  kapt(deps.dagger.apt.compiler)
+  annotationProcessor(deps.android.androidx.room.apt)
+  annotationProcessor(deps.dagger.apt.compiler)
   compileOnly(deps.misc.jsr250)
 
   api(deps.android.androidx.room.runtime)
