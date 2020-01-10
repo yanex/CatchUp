@@ -20,6 +20,7 @@ buildscript {
   repositories {
     google()
     mavenCentral()
+    mavenLocal()
     jcenter()
     maven { url = uri(deps.build.repositories.kotlineap) }
     maven { url = uri(deps.build.repositories.kotlinx) }
@@ -63,6 +64,7 @@ allprojects {
   repositories {
     google()
     mavenCentral()
+    mavenLocal()
     jcenter()
     maven { url = uri(deps.build.repositories.kotlineap) }
     maven { url = uri(deps.build.repositories.kotlinx) }
