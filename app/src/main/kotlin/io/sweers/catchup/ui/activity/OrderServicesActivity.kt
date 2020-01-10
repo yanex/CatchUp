@@ -40,7 +40,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton.OnVisibilityChangedListener
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import dagger.multibindings.Multibinds
 import io.sweers.catchup.CatchUpPreferences
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.ColorUtils
@@ -54,7 +53,6 @@ import io.sweers.catchup.edu.id
 import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerFragment
 import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceMetaRegistry
 import io.sweers.catchup.ui.FontHelper
 import io.sweers.catchup.util.asDayContext
 import io.sweers.catchup.util.isInNightMode
@@ -354,13 +352,6 @@ abstract class OrderServicesBindingModule {
       modules = [OrderServicesModule::class]
   )
   internal abstract fun orderServicesFragment(): OrderServicesFragment
-}
-
-@Module(includes = [ResolvedCatchUpServiceMetaRegistry::class])
-abstract class OrderServicesModule {
-
-  @Multibinds
-  abstract fun serviceMetas(): Map<String, ServiceMeta>
 }
 
 private class FabShowTapTarget(

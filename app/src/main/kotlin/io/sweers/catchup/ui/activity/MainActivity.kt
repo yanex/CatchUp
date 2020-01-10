@@ -15,34 +15,22 @@
  */
 package io.sweers.catchup.ui.activity
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
-import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import com.uber.autodispose.autoDispose
-import dagger.Binds
-import dagger.Provides
-import dagger.multibindings.Multibinds
 import io.sweers.catchup.R
 import io.sweers.catchup.base.ui.InjectingBaseActivity
 import io.sweers.catchup.data.LinkManager
-import io.sweers.catchup.data.ServiceDao
 import io.sweers.catchup.databinding.ActivityMainBinding
 import io.sweers.catchup.edu.Syllabus
-import io.sweers.catchup.injection.ActivityModule
 import io.sweers.catchup.injection.scopes.PerActivity
-import io.sweers.catchup.service.api.LinkHandler
 import io.sweers.catchup.service.api.ScrollableContent
-import io.sweers.catchup.service.api.Service
-import io.sweers.catchup.service.api.ServiceMeta
-import io.sweers.catchup.serviceregistry.ResolvedCatchUpServiceRegistry
 import io.sweers.catchup.ui.DetailDisplayer
 import io.sweers.catchup.ui.fragments.PagerFragment
-import io.sweers.catchup.ui.fragments.service.StorageBackedService
 import io.sweers.catchup.util.customtabs.CustomTabActivityHelper
 import me.saket.inboxrecyclerview.InboxRecyclerView
 import me.saket.inboxrecyclerview.dimming.TintPainter
@@ -50,7 +38,6 @@ import me.saket.inboxrecyclerview.page.ExpandablePageLayout
 import me.saket.inboxrecyclerview.page.InterceptResult
 import me.saket.inboxrecyclerview.page.SimplePageStateChangeCallbacks
 import javax.inject.Inject
-import javax.inject.Provider
 import javax.inject.Qualifier
 
 class MainActivity : InjectingBaseActivity() {
@@ -92,65 +79,6 @@ class MainActivity : InjectingBaseActivity() {
     } else {
       pagerFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as PagerFragment
     }
-  }
-
-  @dagger.Module(includes = [ResolvedCatchUpServiceRegistry::class])
-  abstract class ServiceIntegrationModule : ActivityModule<MainActivity> {
-    @dagger.Module
-    companion object {
-      @TextViewPool
-      @Provides
-      @JvmStatic
-      @PerActivity
-      fun provideTextViewPool() = RecycledViewPool()
-
-      @VisualViewPool
-      @Provides
-      @JvmStatic
-      @PerActivity
-      fun provideVisualViewPool() = RecycledViewPool()
-
-      @Provides
-      @PerActivity
-      @JvmStatic
-      @FinalServices
-      fun provideFinalServices(
-        serviceDao: ServiceDao,
-        serviceMetas: Map<String, @JvmSuppressWildcards ServiceMeta>,
-        sharedPreferences: SharedPreferences,
-        services: Map<String, @JvmSuppressWildcards Provider<Service>>
-      ): Map<String, Provider<Service>> {
-        return services
-            .filter {
-              serviceMetas.getValue(it.key).enabled && sharedPreferences.getBoolean(
-                  serviceMetas.getValue(it.key).enabledPreferenceKey, true)
-            }
-            .mapValues { (_, value) ->
-              Provider { StorageBackedService(serviceDao, value.get()) }
-            }
-      }
-    }
-
-    @Multibinds
-    abstract fun services(): Map<String, Service>
-
-    @Multibinds
-    abstract fun serviceMetas(): Map<String, ServiceMeta>
-
-    @Multibinds
-    abstract fun fragmentCreators(): Map<Class<out Fragment>, @JvmSuppressWildcards Fragment>
-
-    @Binds
-    @PerActivity
-    abstract fun provideLinkHandler(linkManager: LinkManager): LinkHandler
-
-    @Binds
-    @PerActivity
-    abstract fun provideDetailDisplayer(mainActivityDetailDisplayer: MainActivityDetailDisplayer): DetailDisplayer
-
-    @Binds
-    @PerActivity
-    abstract fun provideFragmentFactory(fragmentFactory: MainActivityFragmentFactory): FragmentFactory
   }
 }
 

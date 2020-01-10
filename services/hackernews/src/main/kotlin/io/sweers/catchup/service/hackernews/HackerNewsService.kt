@@ -211,15 +211,6 @@ abstract class HackerNewsModule {
   }
 }
 
-@AssistedModule
-@Module(includes = [AssistedInject_ViewModelModule::class])
-internal abstract class ViewModelModule {
-  @Binds
-  @IntoMap
-  @ViewModelKey(HackerNewsCommentsViewModel::class)
-  abstract fun mainViewModel(viewModel: HackerNewsCommentsViewModel.Factory): AssistedFactory
-}
-
 // TODO generify this somewhere once something other than HN does it
 @Module
 internal object FragmentViewModelFactoryModule {

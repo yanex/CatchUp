@@ -79,7 +79,7 @@ class CatchUpApplication : Application(), HasAndroidInjector {
 
   override fun onCreate() {
     super.onCreate()
-    appComponent = inject()
+    appComponent = CatchUpApplicationDaggerCompat.inject(this)
 
     GlobalScope.launch {
       catchUpPreferences.flowFor { ::daynightAuto }

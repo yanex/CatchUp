@@ -21,7 +21,6 @@ import io.sweers.catchup.injection.ServiceDisplayBindingModule
 import io.sweers.catchup.injection.scopes.PerActivity
 import io.sweers.catchup.ui.about.AboutActivity
 import io.sweers.catchup.ui.about.AboutFragmentBindingModule
-import io.sweers.catchup.ui.activity.ServiceSettingsActivity.ServiceSettingsFrag.ServiceSettingsModule
 import io.sweers.catchup.ui.activity.SettingsActivity.SettingsFrag.SettingsFragmentBindingModule
 
 @Module
@@ -29,7 +28,7 @@ abstract class ActivityBindingModule {
 
   @PerActivity
   @ContributesAndroidInjector(
-      modules = [UiModule::class, MainActivity.ServiceIntegrationModule::class, ServiceDisplayBindingModule::class])
+      modules = [UiModule::class, ServiceIntegrationModule::class, ServiceDisplayBindingModule::class])
   internal abstract fun mainActivity(): MainActivity
 
   @PerActivity

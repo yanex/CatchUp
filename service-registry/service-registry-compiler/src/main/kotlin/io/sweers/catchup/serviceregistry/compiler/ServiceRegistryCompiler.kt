@@ -18,10 +18,7 @@ package io.sweers.catchup.serviceregistry.compiler
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreElements.isAnnotationPresent
 import com.google.auto.service.AutoService
-import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.asClassName
+import com.squareup.javapoet.*
 import com.uber.crumb.compiler.api.ConsumerMetadata
 import com.uber.crumb.compiler.api.CrumbConsumerExtension
 import com.uber.crumb.compiler.api.CrumbContext
@@ -33,14 +30,12 @@ import dagger.Module
 import io.sweers.catchup.serviceregistry.annotations.Meta
 import io.sweers.catchup.serviceregistry.annotations.ServiceModule
 import io.sweers.catchup.serviceregistry.annotations.ServiceRegistry
-import kotlinx.metadata.Flag
-import kotlinx.metadata.jvm.KotlinClassHeader
-import kotlinx.metadata.jvm.KotlinClassMetadata
 import java.io.IOException
 import java.util.Locale
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.ElementKind
+import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic.Kind.ERROR
 
@@ -121,48 +116,13 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
     annotations: Collection<AnnotationMirror>,
     metadata: Set<ConsumerMetadata>
   ) {
-    // Pull out the kotlin data
-    val kmetadata = type.getAnnotation(Metadata::class.java)?.let {
-      KotlinClassMetadata.read(KotlinClassHeader(
-          kind = it.kind,
-          metadataVersion = it.metadataVersion,
-          bytecodeVersion = it.bytecodeVersion,
-          data1 = it.data1,
-          data2 = it.data2,
-          extraString = it.extraString,
-          packageName = it.packageName,
-          extraInt = it.extraInt
-      ))
-    } ?: run {
+    if (type.kind != ElementKind.INTERFACE) {
       context.processingEnv
-          .messager
-          .printMessage(ERROR,
-              "@${ServiceRegistry::class.java.simpleName} can't be applied to $type: " +
-                  "must be a Kotlin class.]",
-              type)
-      return
-    }
-
-    if (kmetadata !is KotlinClassMetadata.Class) {
-      context.processingEnv
-          .messager
-          .printMessage(ERROR,
-              "@${ServiceRegistry::class.java.simpleName} can't be applied to $type: " +
-                  "must be a class.]",
-              type)
-      return
-    }
-
-    val classData = kmetadata.toKmClass()
-
-    // Must be an object class.
-    if (!Flag.Class.IS_INTERFACE(classData.flags)) {
-      context.processingEnv
-          .messager
-          .printMessage(ERROR,
-              "@${ServiceRegistry::class.java.simpleName} can't be applied to $type: must be a " +
-                  "Kotlin interface class",
-              type)
+              .messager
+              .printMessage(ERROR,
+                      "@${ServiceRegistry::class.java.simpleName} can't be applied to $type: must be a " +
+                              "Kotlin interface class",
+                      type)
       return
     }
 
@@ -175,28 +135,31 @@ class ServiceRegistryCompiler : CrumbProducerExtension, CrumbConsumerExtension {
         .distinct()
         .map(context.processingEnv.elementUtils::getTypeElement)
         .filter { it.isMeta == isConsumingMeta }
-        .map(TypeElement::asClassName)
+        .map { it.qualifiedName }
         .toList()
         .toTypedArray()
 
-    val moduleAnnotation = AnnotationSpec.builder(Module::class)
-        .addMember(
-            modules.joinToString(separator = ",\n", prefix = "includes = [\n",
-                postfix = "\n]") { "    %T::class" },
-            *modules)
+    val moduleAnnotation = AnnotationSpec.builder(Module::class.java)
+            .addMember(
+                    "includes",
+                    modules.joinToString(separator = ",\n", prefix = "{\n", postfix = "\n}") { "$it.class" }
+            )
         .build()
 
-    val objectName = "Resolved${type.simpleName.toString().capitalize(Locale.US)}"
+    val className = "Resolved${type.simpleName.toString().capitalize(Locale.US)}"
     try {
       // Generate the file
       @Suppress("UnstableApiUsage")
-      FileSpec.builder(MoreElements.getPackage(type).qualifiedName.toString(),
-          objectName)
-          .addType(TypeSpec.objectBuilder(objectName)
-              .addAnnotation(moduleAnnotation)
-              .addSuperinterface(type.asClassName())
-              .addOriginatingElement(type)
-              .build())
+      JavaFile.builder(
+              MoreElements.getPackage(type).qualifiedName.toString(),
+              TypeSpec.classBuilder(className)
+                      .addModifiers(Modifier.PUBLIC)
+                      .addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build())
+                      .addAnnotation(moduleAnnotation)
+                      .addSuperinterface(TypeName.get(type.asType()))
+                      .addOriginatingElement(type)
+                      .build()
+      )
           .build()
           .writeTo(context.processingEnv.filer)
     } catch (e: IOException) {
